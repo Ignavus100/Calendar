@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minimal Calendar</title>
+    <meta name="viewport" content="width=1024, height=768, initial-scale=1.0">
+    <title>Daily Calendar</title>
     <style>
         * {
             margin: 0;
@@ -13,135 +13,131 @@
 
         body {
             font-family: 'Georgia', 'Times New Roman', serif;
-            background: #f5f5f0;
-            color: #222;
-            padding: 20px;
-            line-height: 1.6;
+            background: #ffffff;
+            color: #000;
+            width: 1024px;
+            height: 768px;
+            overflow: hidden;
+            padding: 30px;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border: 2px solid #333;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 3px double #333;
-            padding-bottom: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #000;
         }
 
         .header h1 {
-            font-size: 2.5em;
+            font-size: 3em;
             font-weight: normal;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
         }
 
-        .header .date {
-            font-size: 1.1em;
-            color: #666;
-            font-style: italic;
+        .current-date {
+            font-size: 1.8em;
+            color: #333;
+            font-weight: normal;
         }
 
-        .controls {
+        .main-content {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 30px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .calendar-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .month-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding: 15px 0;
-            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #000;
         }
 
         .nav-btn {
             background: white;
-            border: 2px solid #333;
-            padding: 10px 20px;
-            font-size: 1.2em;
+            border: 2px solid #000;
+            padding: 8px 18px;
+            font-size: 1.5em;
             cursor: pointer;
             font-family: 'Georgia', serif;
-            transition: all 0.2s;
         }
 
         .nav-btn:active {
-            background: #333;
+            background: #000;
             color: white;
         }
 
         .current-month {
-            font-size: 1.4em;
+            font-size: 1.3em;
             font-weight: bold;
             letter-spacing: 1px;
-        }
-
-        .calendar {
-            margin-bottom: 30px;
         }
 
         .weekdays {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 2px;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .weekday {
             text-align: center;
             font-weight: bold;
-            font-size: 0.9em;
-            letter-spacing: 1px;
+            font-size: 0.85em;
+            padding: 5px 0;
         }
 
         .days {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 2px;
+            flex: 1;
         }
 
         .day {
-            aspect-ratio: 1;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
             background: white;
+            font-size: 0.9em;
             position: relative;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .day:hover {
-            background: #f9f9f9;
-            border-color: #333;
         }
 
         .day.other-month {
             color: #ccc;
-            background: #fafafa;
         }
 
         .day.today {
-            background: #333;
+            background: #000;
             color: white;
             font-weight: bold;
-        }
-
-        .day.has-events {
-            background: #f0f0f0;
+            border: 2px solid #000;
         }
 
         .day.has-events::after {
             content: '•';
             position: absolute;
-            bottom: 3px;
-            font-size: 1.5em;
+            bottom: 2px;
+            font-size: 1.2em;
             color: #666;
         }
 
@@ -150,200 +146,150 @@
         }
 
         .events-section {
-            margin-top: 30px;
-            border-top: 2px solid #333;
-            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            border-left: 3px solid #000;
+            padding-left: 30px;
+            overflow-y: auto;
         }
 
-        .events-title {
-            font-size: 1.5em;
-            margin-bottom: 15px;
+        .events-header {
+            font-size: 1.8em;
+            margin-bottom: 20px;
             font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .no-events {
+            font-size: 1.3em;
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            margin-top: 100px;
         }
 
         .event {
-            padding: 12px;
-            margin-bottom: 10px;
-            border-left: 4px solid #333;
+            padding: 18px;
+            margin-bottom: 15px;
+            border: 2px solid #000;
             background: #f9f9f9;
         }
 
         .event-time {
             font-weight: bold;
-            font-size: 0.9em;
-            color: #666;
+            font-size: 1.2em;
+            color: #000;
+            margin-bottom: 8px;
         }
 
         .event-title {
-            font-size: 1.1em;
-            margin-top: 3px;
+            font-size: 1.4em;
+            margin-bottom: 8px;
+            line-height: 1.4;
         }
 
         .event-description {
-            font-size: 0.9em;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .sync-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f5f5f0;
-            border: 1px solid #ddd;
-        }
-
-        .sync-section h3 {
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .sync-btn {
-            background: #333;
-            color: white;
-            border: none;
-            padding: 15px 30px;
             font-size: 1.1em;
-            cursor: pointer;
-            font-family: 'Georgia', serif;
-            letter-spacing: 1px;
-            margin-top: 10px;
-            width: 100%;
-        }
-
-        .sync-btn:active {
-            background: #555;
-        }
-
-        .sync-status {
-            margin-top: 10px;
-            font-style: italic;
-            color: #666;
-            text-align: center;
-            font-size: 0.9em;
-        }
-
-        .error {
-            color: #cc0000;
-        }
-
-        .success {
-            color: #006600;
-        }
-
-        #calendarInput {
-            width: 100%;
-            padding: 10px;
-            font-size: 0.9em;
-            border: 2px solid #333;
-            font-family: 'Georgia', serif;
-            margin-top: 10px;
-        }
-
-        .instructions {
-            font-size: 0.85em;
-            color: #666;
-            margin-top: 10px;
+            color: #444;
             line-height: 1.5;
-        }
-
-        .instructions ol {
-            margin-left: 20px;
             margin-top: 8px;
         }
 
-        .instructions li {
-            margin-bottom: 5px;
+        .sync-status {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.75em;
+            color: #999;
+            font-style: italic;
         }
 
-        .auto-sync {
+        .loading {
             text-align: center;
-            margin-top: 10px;
-            font-size: 0.85em;
-            color: #999;
+            padding: 50px;
+            font-size: 1.5em;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Hide scrollbar for Kindle */
+        .events-section::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .events-section::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .events-section::-webkit-scrollbar-thumb {
+            background: #888;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>CALENDAR</h1>
-            <div class="date" id="todayDate"></div>
+            <h1>TODAY</h1>
+            <div class="current-date" id="currentDate"></div>
         </div>
 
-        <div class="controls">
-            <button class="nav-btn" onclick="previousMonth()">‹</button>
-            <div class="current-month" id="currentMonth"></div>
-            <button class="nav-btn" onclick="nextMonth()">›</button>
-        </div>
+        <div class="main-content">
+            <div class="calendar-section">
+                <div class="month-nav">
+                    <button class="nav-btn" onclick="previousMonth()">‹</button>
+                    <div class="current-month" id="currentMonth"></div>
+                    <button class="nav-btn" onclick="nextMonth()">›</button>
+                </div>
 
-        <div class="calendar">
-            <div class="weekdays">
-                <div class="weekday">SUN</div>
-                <div class="weekday">MON</div>
-                <div class="weekday">TUE</div>
-                <div class="weekday">WED</div>
-                <div class="weekday">THU</div>
-                <div class="weekday">FRI</div>
-                <div class="weekday">SAT</div>
+                <div class="weekdays">
+                    <div class="weekday">S</div>
+                    <div class="weekday">M</div>
+                    <div class="weekday">T</div>
+                    <div class="weekday">W</div>
+                    <div class="weekday">T</div>
+                    <div class="weekday">F</div>
+                    <div class="weekday">S</div>
+                </div>
+
+                <div class="days" id="calendarDays"></div>
             </div>
-            <div class="days" id="calendarDays"></div>
-        </div>
 
-        <div class="events-section" id="eventsSection" style="display: none;">
-            <div class="events-title">Events</div>
-            <div id="eventsList"></div>
-        </div>
-
-        <div class="sync-section">
-            <h3>Google Calendar Setup</h3>
-            <div class="instructions">
-                <strong>How to get your calendar link:</strong>
-                <ol>
-                    <li>Go to <strong>calendar.google.com</strong></li>
-                    <li>Click <strong>Settings ⚙️</strong> → Select your calendar</li>
-                    <li>Scroll to <strong>"Integrate calendar"</strong></li>
-                    <li>Copy the <strong>"Secret address in iCal format"</strong></li>
-                    <li>Paste below and click SYNC</li>
-                </ol>
+            <div class="events-section" id="eventsSection">
+                <div class="events-header" id="eventsHeader">Today's Events</div>
+                <div id="eventsList">
+                    <div class="loading">Loading events...</div>
+                </div>
             </div>
-            <input type="text" id="calendarInput" placeholder="https://calendar.google.com/calendar/ical/...">
-            <button class="sync-btn" onclick="syncCalendar()">SYNC CALENDAR</button>
-            <div class="sync-status" id="syncStatus"></div>
-            <div class="auto-sync">Calendar syncs automatically on page load</div>
         </div>
+
+        <div class="sync-status" id="syncStatus"></div>
     </div>
 
     <script>
-        // ========================================
-        // PUT YOUR GOOGLE CALENDAR ICAL URL HERE:
-        // ========================================
-        const HARDCODED_CALENDAR_URL = 'https://calendar.google.com/calendar/ical/olicass100%40gmail.com/private-810c0322e737a9a083bb2d634cab5ac0/basic.ics';
-        // Example: 'https://calendar.google.com/calendar/ical/your_email%40gmail.com/private-xxxxx/basic.ics'
+        const CALENDAR_URL = 'https://calendar.google.com/calendar/ical/olicass100%40gmail.com/private-810c0322e737a9a083bb2d634cab5ac0/basic.ics';
         
         let currentDate = new Date();
+        let viewDate = new Date();
         let events = {};
-        let calendarUrl = HARDCODED_CALENDAR_URL || localStorage.getItem('calendarUrl') || '';
 
-        // Auto-sync on load if URL exists
-        if (calendarUrl) {
-            document.getElementById('calendarInput').value = calendarUrl;
+        function init() {
+            renderCalendar();
             syncCalendar();
         }
 
         function renderCalendar() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
+            const year = viewDate.getFullYear();
+            const month = viewDate.getMonth();
             
-            // Update header
             const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
                               'July', 'August', 'September', 'October', 'November', 'December'];
+            
             document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
             
             const today = new Date();
-            document.getElementById('todayDate').textContent = 
-                today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('currentDate').textContent = 
+                today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
             
-            // Calculate first day and days in month
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const daysInPrevMonth = new Date(year, month, 0).getDate();
@@ -374,6 +320,9 @@
                 const dayDiv = createDayElement(day, true, year, month + 1);
                 daysContainer.appendChild(dayDiv);
             }
+            
+            // Show today's events
+            showTodayEvents();
         }
 
         function createDayElement(day, otherMonth, year, month, isToday = false) {
@@ -388,27 +337,29 @@
             }
             
             div.textContent = day;
-            div.onclick = () => showEventsForDate(dateKey, day, month, year);
             return div;
         }
 
-        function showEventsForDate(dateKey, day, month, year) {
-            const dateEvents = events[dateKey] || [];
-            const eventsSection = document.getElementById('eventsSection');
-            const eventsList = document.getElementById('eventsList');
-            const eventsTitle = document.querySelector('.events-title');
+        function showTodayEvents() {
+            const today = new Date();
+            const dateKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             
-            if (dateEvents.length === 0) {
-                eventsSection.style.display = 'none';
+            const todayEvents = events[dateKey] || [];
+            const eventsList = document.getElementById('eventsList');
+            
+            if (todayEvents.length === 0) {
+                eventsList.innerHTML = '<div class="no-events">No events today</div>';
                 return;
             }
             
-            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                              'July', 'August', 'September', 'October', 'November', 'December'];
-            eventsTitle.textContent = `Events for ${monthNames[month]} ${day}, ${year}`;
+            // Sort events by time
+            todayEvents.sort((a, b) => {
+                if (a.time === 'All day') return -1;
+                if (b.time === 'All day') return 1;
+                return a.time.localeCompare(b.time);
+            });
             
-            eventsSection.style.display = 'block';
-            eventsList.innerHTML = dateEvents.map(event => `
+            eventsList.innerHTML = todayEvents.map(event => `
                 <div class="event">
                     <div class="event-time">${event.time}</div>
                     <div class="event-title">${event.title}</div>
@@ -418,55 +369,38 @@
         }
 
         function previousMonth() {
-            currentDate.setMonth(currentDate.getMonth() - 1);
+            viewDate.setMonth(viewDate.getMonth() - 1);
             renderCalendar();
         }
 
         function nextMonth() {
-            currentDate.setMonth(currentDate.getMonth() + 1);
+            viewDate.setMonth(viewDate.getMonth() + 1);
             renderCalendar();
         }
 
         async function syncCalendar() {
-            const url = document.getElementById('calendarInput').value.trim();
             const statusDiv = document.getElementById('syncStatus');
-            
-            if (!url) {
-                statusDiv.textContent = 'Please enter a calendar URL';
-                statusDiv.className = 'sync-status error';
-                return;
-            }
-            
-            if (!url.includes('calendar.google.com') || !url.includes('.ics')) {
-                statusDiv.textContent = 'Please use a valid Google Calendar iCal URL (must end in .ics)';
-                statusDiv.className = 'sync-status error';
-                return;
-            }
-            
             statusDiv.textContent = 'Syncing...';
-            statusDiv.className = 'sync-status';
-            localStorage.setItem('calendarUrl', url);
             
             try {
-                // Use CORS proxy to fetch the iCal data
                 const proxyUrl = 'https://corsproxy.io/?';
-                const response = await fetch(proxyUrl + encodeURIComponent(url));
+                const response = await fetch(proxyUrl + encodeURIComponent(CALENDAR_URL));
                 
                 if (!response.ok) {
-                    throw new Error('Failed to fetch calendar data');
+                    throw new Error('Failed to fetch calendar');
                 }
                 
                 const icsData = await response.text();
                 events = parseICS(icsData);
                 
                 renderCalendar();
-                statusDiv.textContent = 'Last synced: ' + new Date().toLocaleString();
-                statusDiv.className = 'sync-status success';
+                statusDiv.textContent = 'Synced: ' + new Date().toLocaleTimeString();
                 
             } catch (error) {
-                statusDiv.textContent = 'Error: ' + error.message + ' (Check your calendar is public)';
-                statusDiv.className = 'sync-status error';
+                statusDiv.textContent = 'Sync failed';
                 console.error('Sync error:', error);
+                document.getElementById('eventsList').innerHTML = 
+                    '<div class="no-events">Could not load events</div>';
             }
         }
 
@@ -516,8 +450,8 @@
             return events;
         }
 
-        // Initialize
-        renderCalendar();
+        // Initialize on load
+        init();
     </script>
 </body>
 </html>
