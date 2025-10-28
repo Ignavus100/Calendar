@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1024, height=768, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Calendar</title>
     <style>
         * {
@@ -12,258 +12,220 @@
         }
 
         body {
-            font-family: 'Georgia', 'Times New Roman', serif;
+            font-family: serif;
             background: #ffffff;
             color: #000;
-            width: 1024px;
-            height: 768px;
-            overflow: hidden;
-            padding: 30px;
-        }
-
-        .container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+            padding: 15px;
+            line-height: 1.4;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #000;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #000;
         }
 
         .header h1 {
-            font-size: 3em;
-            font-weight: normal;
-            letter-spacing: 3px;
-            margin-bottom: 8px;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
         }
 
         .current-date {
-            font-size: 1.8em;
+            font-size: 20px;
             color: #333;
-            font-weight: normal;
         }
 
-        .main-content {
-            display: grid;
-            grid-template-columns: 380px 1fr;
-            gap: 30px;
-            flex: 1;
-            overflow: hidden;
+        .events-section {
+            margin-top: 15px;
         }
 
-        .calendar-section {
-            display: flex;
-            flex-direction: column;
+        .events-header {
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #000;
+        }
+
+        .event {
+            padding: 15px;
+            margin-bottom: 12px;
+            border: 2px solid #000;
+            background: #f5f5f5;
+            page-break-inside: avoid;
+        }
+
+        .event-time {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .event-title {
+            font-size: 22px;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .event-description {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.4;
+            margin-top: 8px;
+        }
+
+        .no-events {
+            font-size: 20px;
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .mini-calendar {
+            margin: 15px 0;
+            padding: 12px;
+            background: #f9f9f9;
+            border: 1px solid #ccc;
         }
 
         .month-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #000;
+            display: table;
+            width: 100%;
+            margin-bottom: 10px;
+            border-collapse: collapse;
+        }
+
+        .month-nav-cell {
+            display: table-cell;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .month-nav-cell.left {
+            text-align: left;
+            width: 60px;
+        }
+
+        .month-nav-cell.right {
+            text-align: right;
+            width: 60px;
         }
 
         .nav-btn {
             background: white;
             border: 2px solid #000;
-            padding: 8px 18px;
-            font-size: 1.5em;
+            padding: 5px 12px;
+            font-size: 20px;
             cursor: pointer;
-            font-family: 'Georgia', serif;
-        }
-
-        .nav-btn:active {
-            background: #000;
-            color: white;
+            font-family: serif;
         }
 
         .current-month {
-            font-size: 1.3em;
+            font-size: 18px;
             font-weight: bold;
-            letter-spacing: 1px;
         }
 
-        .weekdays {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 2px;
-            margin-bottom: 8px;
+        .cal-grid {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .weekday {
+        .cal-grid td {
+            border: 1px solid #999;
+            padding: 8px 4px;
             text-align: center;
+            font-size: 14px;
+            width: 14.28%;
+        }
+
+        .cal-grid th {
+            border: 1px solid #000;
+            padding: 6px 2px;
+            text-align: center;
+            font-size: 12px;
             font-weight: bold;
-            font-size: 0.85em;
-            padding: 5px 0;
+            background: #e0e0e0;
         }
 
-        .days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 2px;
-            flex: 1;
-        }
-
-        .day {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #ccc;
-            background: white;
-            font-size: 0.9em;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .day.other-month {
+        .cal-grid .other-month {
             color: #ccc;
         }
 
-        .day.today {
+        .cal-grid .today {
             background: #000;
             color: white;
             font-weight: bold;
-            border: 2px solid #000;
         }
 
-        .day.has-events::after {
-            content: '•';
-            position: absolute;
-            bottom: 2px;
-            font-size: 1.2em;
-            color: #666;
-        }
-
-        .day.today.has-events::after {
-            color: white;
-        }
-
-        .events-section {
-            display: flex;
-            flex-direction: column;
-            border-left: 3px solid #000;
-            padding-left: 30px;
-            overflow-y: auto;
-        }
-
-        .events-header {
-            font-size: 1.8em;
-            margin-bottom: 20px;
+        .cal-grid .has-events {
+            position: relative;
             font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        .no-events {
-            font-size: 1.3em;
-            color: #666;
-            font-style: italic;
-            text-align: center;
-            margin-top: 100px;
-        }
-
-        .event {
-            padding: 18px;
-            margin-bottom: 15px;
-            border: 2px solid #000;
-            background: #f9f9f9;
-        }
-
-        .event-time {
-            font-weight: bold;
-            font-size: 1.2em;
-            color: #000;
-            margin-bottom: 8px;
-        }
-
-        .event-title {
-            font-size: 1.4em;
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-
-        .event-description {
-            font-size: 1.1em;
-            color: #444;
-            line-height: 1.5;
-            margin-top: 8px;
         }
 
         .sync-status {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            font-size: 0.75em;
+            text-align: center;
+            font-size: 12px;
             color: #999;
+            margin-top: 15px;
             font-style: italic;
         }
 
         .loading {
             text-align: center;
-            padding: 50px;
-            font-size: 1.5em;
+            padding: 30px;
+            font-size: 18px;
             color: #666;
             font-style: italic;
-        }
-
-        /* Hide scrollbar for Kindle */
-        .events-section::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .events-section::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        .events-section::-webkit-scrollbar-thumb {
-            background: #888;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>TODAY</h1>
-            <div class="current-date" id="currentDate"></div>
-        </div>
-
-        <div class="main-content">
-            <div class="calendar-section">
-                <div class="month-nav">
-                    <button class="nav-btn" onclick="previousMonth()">‹</button>
-                    <div class="current-month" id="currentMonth"></div>
-                    <button class="nav-btn" onclick="nextMonth()">›</button>
-                </div>
-
-                <div class="weekdays">
-                    <div class="weekday">S</div>
-                    <div class="weekday">M</div>
-                    <div class="weekday">T</div>
-                    <div class="weekday">W</div>
-                    <div class="weekday">T</div>
-                    <div class="weekday">F</div>
-                    <div class="weekday">S</div>
-                </div>
-
-                <div class="days" id="calendarDays"></div>
-            </div>
-
-            <div class="events-section" id="eventsSection">
-                <div class="events-header" id="eventsHeader">Today's Events</div>
-                <div id="eventsList">
-                    <div class="loading">Loading events...</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="sync-status" id="syncStatus"></div>
+    <div class="header">
+        <h1>TODAY</h1>
+        <div class="current-date" id="currentDate"></div>
     </div>
+
+    <div class="events-section">
+        <div class="events-header">Today's Schedule</div>
+        <div id="eventsList">
+            <div class="loading">Loading events...</div>
+        </div>
+    </div>
+
+    <div class="mini-calendar">
+        <div class="month-nav">
+            <div class="month-nav-cell left">
+                <button class="nav-btn" onclick="previousMonth()">‹</button>
+            </div>
+            <div class="month-nav-cell">
+                <span class="current-month" id="currentMonth"></span>
+            </div>
+            <div class="month-nav-cell right">
+                <button class="nav-btn" onclick="nextMonth()">›</button>
+            </div>
+        </div>
+
+        <table class="cal-grid">
+            <thead>
+                <tr>
+                    <th>Su</th>
+                    <th>Mo</th>
+                    <th>Tu</th>
+                    <th>We</th>
+                    <th>Th</th>
+                    <th>Fr</th>
+                    <th>Sa</th>
+                </tr>
+            </thead>
+            <tbody id="calendarDays"></tbody>
+        </table>
+    </div>
+
+    <div class="sync-status" id="syncStatus"></div>
 
     <script>
         const CALENDAR_URL = 'https://calendar.google.com/calendar/ical/olicass100%40gmail.com/private-810c0322e737a9a083bb2d634cab5ac0/basic.ics';
@@ -284,11 +246,11 @@
             const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
                               'July', 'August', 'September', 'October', 'November', 'December'];
             
-            document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+            document.getElementById('currentMonth').textContent = monthNames[month] + ' ' + year;
             
             const today = new Date();
-            document.getElementById('currentDate').textContent = 
-                today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+            const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+            document.getElementById('currentDate').textContent = today.toLocaleDateString('en-US', options);
             
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -297,75 +259,87 @@
             const daysContainer = document.getElementById('calendarDays');
             daysContainer.innerHTML = '';
             
+            let html = '';
+            let dayCount = 0;
+            
+            // Start first row
+            html += '<tr>';
+            
             // Previous month days
             for (let i = firstDay - 1; i >= 0; i--) {
                 const day = daysInPrevMonth - i;
-                const dayDiv = createDayElement(day, true, year, month - 1);
-                daysContainer.appendChild(dayDiv);
+                html += '<td class="other-month">' + day + '</td>';
+                dayCount++;
             }
             
             // Current month days
             for (let day = 1; day <= daysInMonth; day++) {
+                if (dayCount % 7 === 0 && dayCount !== 0) {
+                    html += '</tr><tr>';
+                }
+                
                 const isToday = day === today.getDate() && 
                               month === today.getMonth() && 
                               year === today.getFullYear();
-                const dayDiv = createDayElement(day, false, year, month, isToday);
-                daysContainer.appendChild(dayDiv);
+                
+                const dateKey = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+                const hasEvents = events[dateKey] && events[dateKey].length > 0;
+                
+                let classes = '';
+                if (isToday) classes += 'today ';
+                if (hasEvents) classes += 'has-events ';
+                
+                html += '<td class="' + classes + '">' + day + (hasEvents ? '•' : '') + '</td>';
+                dayCount++;
             }
             
             // Next month days
-            const totalCells = daysContainer.children.length;
-            const remainingCells = 42 - totalCells;
-            for (let day = 1; day <= remainingCells; day++) {
-                const dayDiv = createDayElement(day, true, year, month + 1);
-                daysContainer.appendChild(dayDiv);
+            let nextDay = 1;
+            while (dayCount % 7 !== 0) {
+                html += '<td class="other-month">' + nextDay + '</td>';
+                nextDay++;
+                dayCount++;
             }
             
-            // Show today's events
+            html += '</tr>';
+            daysContainer.innerHTML = html;
+            
             showTodayEvents();
-        }
-
-        function createDayElement(day, otherMonth, year, month, isToday = false) {
-            const div = document.createElement('div');
-            div.className = 'day';
-            if (otherMonth) div.classList.add('other-month');
-            if (isToday) div.classList.add('today');
-            
-            const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            if (events[dateKey] && events[dateKey].length > 0) {
-                div.classList.add('has-events');
-            }
-            
-            div.textContent = day;
-            return div;
         }
 
         function showTodayEvents() {
             const today = new Date();
-            const dateKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            const dateKey = today.getFullYear() + '-' + 
+                          String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                          String(today.getDate()).padStart(2, '0');
             
             const todayEvents = events[dateKey] || [];
             const eventsList = document.getElementById('eventsList');
             
             if (todayEvents.length === 0) {
-                eventsList.innerHTML = '<div class="no-events">No events today</div>';
+                eventsList.innerHTML = '<div class="no-events">No events scheduled for today</div>';
                 return;
             }
             
             // Sort events by time
-            todayEvents.sort((a, b) => {
+            todayEvents.sort(function(a, b) {
                 if (a.time === 'All day') return -1;
                 if (b.time === 'All day') return 1;
                 return a.time.localeCompare(b.time);
             });
             
-            eventsList.innerHTML = todayEvents.map(event => `
-                <div class="event">
-                    <div class="event-time">${event.time}</div>
-                    <div class="event-title">${event.title}</div>
-                    ${event.description ? `<div class="event-description">${event.description}</div>` : ''}
-                </div>
-            `).join('');
+            let html = '';
+            for (let i = 0; i < todayEvents.length; i++) {
+                const event = todayEvents[i];
+                html += '<div class="event">';
+                html += '<div class="event-time">' + event.time + '</div>';
+                html += '<div class="event-title">' + event.title + '</div>';
+                if (event.description) {
+                    html += '<div class="event-description">' + event.description + '</div>';
+                }
+                html += '</div>';
+            }
+            eventsList.innerHTML = html;
         }
 
         function previousMonth() {
@@ -380,7 +354,7 @@
 
         async function syncCalendar() {
             const statusDiv = document.getElementById('syncStatus');
-            statusDiv.textContent = 'Syncing...';
+            statusDiv.textContent = 'Syncing calendar...';
             
             try {
                 const proxyUrl = 'https://corsproxy.io/?';
@@ -394,13 +368,15 @@
                 events = parseICS(icsData);
                 
                 renderCalendar();
-                statusDiv.textContent = 'Synced: ' + new Date().toLocaleTimeString();
+                
+                const now = new Date();
+                statusDiv.textContent = 'Last synced: ' + now.toLocaleTimeString();
                 
             } catch (error) {
-                statusDiv.textContent = 'Sync failed';
+                statusDiv.textContent = 'Sync failed - check WiFi connection';
                 console.error('Sync error:', error);
                 document.getElementById('eventsList').innerHTML = 
-                    '<div class="no-events">Could not load events</div>';
+                    '<div class="no-events">Could not load events. Check WiFi.</div>';
             }
         }
 
@@ -427,21 +403,21 @@
                     }
                     currentEvent = null;
                 } else if (currentEvent) {
-                    if (line.startsWith('DTSTART')) {
+                    if (line.indexOf('DTSTART') === 0) {
                         const dateMatch = line.match(/(\d{4})(\d{2})(\d{2})(T(\d{2})(\d{2}))?/);
                         if (dateMatch) {
-                            currentEvent.date = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
+                            currentEvent.date = dateMatch[1] + '-' + dateMatch[2] + '-' + dateMatch[3];
                             if (dateMatch[5] && dateMatch[6]) {
                                 const hour = parseInt(dateMatch[5]);
                                 const min = dateMatch[6];
                                 const ampm = hour >= 12 ? 'PM' : 'AM';
                                 const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
-                                currentEvent.time = `${displayHour}:${min} ${ampm}`;
+                                currentEvent.time = displayHour + ':' + min + ' ' + ampm;
                             }
                         }
-                    } else if (line.startsWith('SUMMARY:')) {
+                    } else if (line.indexOf('SUMMARY:') === 0) {
                         currentEvent.title = line.substring(8).replace(/\\n/g, ' ').replace(/\\,/g, ',');
-                    } else if (line.startsWith('DESCRIPTION:')) {
+                    } else if (line.indexOf('DESCRIPTION:') === 0) {
                         currentEvent.description = line.substring(12).replace(/\\n/g, ' ').replace(/\\,/g, ',');
                     }
                 }
@@ -450,7 +426,6 @@
             return events;
         }
 
-        // Initialize on load
         init();
     </script>
 </body>
